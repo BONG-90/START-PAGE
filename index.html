@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>나의 시작 페이지</title>
+<title>봉의 시작 페이지</title>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#f4f5f9;--card:#fff;--text:#1c2033;--sub:#6b7190;--line:#e4e6ef;--accent:#4f6bff;--up:#e5384a;--down:#2f6bff}
@@ -60,9 +60,9 @@ ul{margin:0;padding-left:18px}
 
 <div class="search">
   <select id="eng">
-    <option value="[https://search.naver.com/search.naver?query=](https://search.naver.com/search.naver?query=)">네이버</option>
-    <option value="[https://www.google.com/search?q=](https://www.google.com/search?q=)">구글</option>
-    <option value="[https://www.youtube.com/results?search_query=](https://www.youtube.com/results?search_query=)">유튜브</option>
+    <option value="https://search.naver.com/search.naver?query=">네이버</option>
+    <option value="https://www.google.com/search?q=">구글</option>
+    <option value="https://www.youtube.com/results?search_query=">유튜브</option>
   </select>
   <input id="q" placeholder="검색어를 입력하세요" autocomplete="off">
   <button id="go">검색</button>
@@ -70,33 +70,33 @@ ul{margin:0;padding-left:18px}
 
 <div class="grid">
   <section class="card">
-    <h2>📈 실시간 증시 <small>KOSPI · KOSDAQ</small></h2>
-    <div class="snap" id="s-market">로딩 중...</div>
+    <h2>📈 한국 증시 <small>KOSPI · KOSDAQ</small></h2>
+    <div class="snap" id="s-market"></div>
     <div class="links">
-      <a target="_blank" rel="noopener" href="[https://finance.naver.com/sise/](https://finance.naver.com/sise/)">네이버 증권</a>
-      <a target="_blank" rel="noopener" href="[https://data.krx.co.kr](https://data.krx.co.kr)">KRX</a>
-      <a target="_blank" rel="noopener" href="[https://finance.naver.com/marketindex/](https://finance.naver.com/marketindex/)">환율</a>
+      <a target="_blank" rel="noopener" href="https://finance.naver.com/sise/">네이버 증권</a>
+      <a target="_blank" rel="noopener" href="https://data.krx.co.kr">KRX</a>
+      <a target="_blank" rel="noopener" href="https://finance.naver.com/marketindex/">환율</a>
     </div>
   </section>
 
   <section class="card">
-    <h2>🎬 연예 뉴스 <small>실시간 헤드라인</small></h2>
-    <div class="snap" id="s-ent">로딩 중...</div>
+    <h2>🎬 연예 뉴스 <small>Entertainment</small></h2>
+    <div class="snap" id="s-ent"></div>
     <div class="links">
-      <a target="_blank" rel="noopener" href="[https://entertain.naver.com](https://entertain.naver.com)">네이버 연예</a>
-      <a target="_blank" rel="noopener" href="[https://entertain.daum.net](https://entertain.daum.net)">다음 연예</a>
-      <a target="_blank" rel="noopener" href="[https://www.starnewskorea.com](https://www.starnewskorea.com)">스타뉴스</a>
+      <a target="_blank" rel="noopener" href="https://entertain.naver.com">네이버 연예</a>
+      <a target="_blank" rel="noopener" href="https://entertain.daum.net">다음 연예</a>
+      <a target="_blank" rel="noopener" href="https://www.starnewskorea.com">스타뉴스</a>
     </div>
   </section>
 
   <section class="card">
-    <h2>🎮 LoL e스포츠 <small>실시간 주요 뉴스</small></h2>
-    <div class="snap" id="s-lol">로딩 중...</div>
+    <h2>🎮 LoL e스포츠 <small>LCK · Worlds</small></h2>
+    <div class="snap" id="s-lol"></div>
     <div class="links">
-      <a target="_blank" rel="noopener" href="[https://lolesports.com](https://lolesports.com)">LoL Esports</a>
-      <a target="_blank" rel="noopener" href="[https://www.inven.co.kr/webzine/news/?site=lol](https://www.inven.co.kr/webzine/news/?site=lol)">인벤 LoL</a>
-      <a target="_blank" rel="noopener" href="[https://www.fmkorea.com/lol](https://www.fmkorea.com/lol)">에펨코리아</a>
-      <a target="_blank" rel="noopener" href="[https://lol.fandom.com/wiki/LCK](https://lol.fandom.com/wiki/LCK)">Leaguepedia</a>
+      <a target="_blank" rel="noopener" href="https://lolesports.com">LoL Esports</a>
+      <a target="_blank" rel="noopener" href="https://www.inven.co.kr/webzine/news/?site=lol">인벤 LoL</a>
+      <a target="_blank" rel="noopener" href="https://www.fmkorea.com/lol">에펨코리아</a>
+      <a target="_blank" rel="noopener" href="https://lol.fandom.com/wiki/LCK">Leaguepedia</a>
     </div>
   </section>
 </div>
@@ -115,8 +115,19 @@ ul{margin:0;padding-left:18px}
 </div>
 
 <script>
+// 기본 안정 데이터
+let DATA = {
+  asOf: "실시간 브리핑",
+  market: [
+    {name:"코스피", value:"네이버 증권 확인", chg:""},
+    {name:"코스닥", value:"네이버 증권 확인", chg:""}
+  ],
+  ent: ["실시간 연예 뉴스는 아래 관련 포털 링크에서 확인하실 수 있습니다."],
+  lol: ["최신 LCK 및 롤드컵 일정/경기 결과는 아래 LoL Esports 사이트를 확인하세요."]
+};
+
 const $=id=>document.getElementById(id);
-function esc(s){const e=document.createElement('div');e.textContent=s;return e.innerHTML}
+const EMPTY='<div class="empty">데이터를 불러올 수 없습니다.</div>';
 
 function tick(){
   const d=new Date(),p=n=>String(n).padStart(2,'0');
@@ -127,58 +138,29 @@ function tick(){
 }
 tick();setInterval(tick,15000);
 
-// 1. Stooq OpenAPI (CORS 허용) 실시간 증시 불러오기
-async function fetchRealtimeMarket() {
-  const box = $('s-market');
-  try {
-    const resKOSPI = await fetch('[https://stooq.com/q/l/?s=](https://stooq.com/q/l/?s=)^kospi&f=sd2t2ohlc&h&e=csv');
-    const textKOSPI = await resKOSPI.text();
-    const kospiVal = textKOSPI.split('\n')[1].split(',')[6]; // 종가/현재가
+function esc(s){const e=document.createElement('div');e.textContent=s;return e.innerHTML}
+function list(a){return a&&a.length?'<ul>'+a.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':EMPTY}
 
-    const resKOSDAQ = await fetch('[https://stooq.com/q/l/?s=](https://stooq.com/q/l/?s=)^kosdaq&f=sd2t2ohlc&h&e=csv');
-    const textKOSDAQ = await resKOSDAQ.text();
-    const kosdaqVal = textKOSDAQ.split('\n')[1].split(',')[6];
-
-    box.innerHTML = `
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-        <span>코스피</span><span><b>${parseFloat(kospiVal).toLocaleString('ko-KR')}</b></span>
-      </div>
-      <div style="display:flex;justify-content:space-between">
-        <span>코스닥</span><span><b>${parseFloat(kosdaqVal).toLocaleString('ko-KR')}</b></span>
-      </div>
-    `;
-  } catch (e) {
-    box.innerHTML = '<div class="empty">실시간 증시 정보를 불러올 수 없습니다. 아래 네이버 증권 링크를 이용해 주세요.</div>';
-  }
+function render(){
+  $('s-market').innerHTML=DATA.market&&DATA.market.length?DATA.market.map(m=>'<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>'+esc(m.name)+'</span><span><b>'+esc(m.value)+'</b> <span class="'+(m.chg&&m.chg.trim().startsWith('-')?'down':'up')+'">'+esc(m.chg||'')+'</span></span></div>').join(''):EMPTY;
+  $('s-ent').innerHTML=list(DATA.ent);
+  $('s-lol').innerHTML=list(DATA.lol);
+  $('foot').textContent=DATA.asOf?'브리핑 기준: '+DATA.asOf:'';
 }
 
-// 2. RSS 기반 실시간 뉴스 함수
-async function fetchRssNews(query, elementId) {
-  const box = $(elementId);
-  try {
-    const rssUrl = encodeURIComponent(`[https://news.google.com/rss/search?q=$](https://news.google.com/rss/search?q=$){encodeURIComponent(query)}&hl=ko&gl=KR&ceid=KR:ko`);
-    const res = await fetch(`[https://api.rss2json.com/v1/api.json?rss_url=$](https://api.rss2json.com/v1/api.json?rss_url=$){rssUrl}`);
-    const data = await res.json();
+// 초기 화면 출력
+render();
 
-    if (data.status !== 'ok' || !data.items || data.items.length === 0) throw new Error('RSS 없음');
-
-    const newsList = data.items.slice(0, 4);
-    let html = '<ul>';
-    newsList.forEach(item => {
-      html += `<li><a href="${item.link}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">${esc(item.title)}</a></li>`;
-    });
-    html += '</ul>';
-    box.innerHTML = html;
-  } catch (e) {
-    box.innerHTML = '<div class="empty">최신 뉴스를 불러오지 못했습니다. 아래 관련 링크를 이용해 주세요.</div>';
-  }
-}
-
-// 데이터 불러오기 실행
-fetchRealtimeMarket();
-fetchRssNews('연예', 's-ent');
-fetchRssNews('LoL LCK 롤드컵', 's-lol');
-$('foot').textContent = '실시간 API 데이터연동 완료';
+// GitHub Actions가 업로드해두는 data.json 파일 읽기
+fetch('data.json?' + Date.now())
+  .then(r => r.ok ? r.json() : null)
+  .then(d => {
+    if(d) {
+      DATA = d;
+      render();
+    }
+  })
+  .catch(() => {});
 
 // 검색 기능
 function search(){const q=$('q').value.trim();if(q)window.open($('eng').value+encodeURIComponent(q),'_blank','noopener')}
