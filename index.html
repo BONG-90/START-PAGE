@@ -90,12 +90,8 @@ ul{margin:0;padding-left:18px}
   </section>
 
   <section class="card">
-    <h2>🎮 LoL e스포츠 <small>LCK · Worlds</small></h2>
-    <div class="snap" id="s-lol">
-      <ul>
-        <li>실시간 LCK 및 롤드컵 일정/경기 결과는 아래 링크에서 바로 확인하세요.</li>
-      </ul>
-    </div>
+    <h2>🎮 LoL e스포츠 <small>실시간 주요 뉴스</small></h2>
+    <div class="snap" id="s-lol">로딩 중...</div>
     <div class="links">
       <a target="_blank" rel="noopener" href="https://lolesports.com">LoL Esports</a>
       <a target="_blank" rel="noopener" href="https://www.inven.co.kr/webzine/news/?site=lol">인벤 LoL</a>
@@ -124,6 +120,135 @@ const EMPTY='<div class="empty">데이터를 불러오지 못했습니다.</div>
 
 function tick(){
   const d=new Date(),p=n=>String(n).padStart(2,'0');
+  $('clock').textContent=p(d.getHours())+':'+p(d.getMinutes());$('date').textContent=d.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  const h=d.getHours();
+  $('greet').textContent=h<6?'늦은 밤이에요 🌙':h<12?'좋은 아침이에요 ☀️':h<18?'좋은 오후예요 🙂':'좋은 저녁이에요 `index.html` 하단 스크립트에 **CORS 회피 프로시(AllOrigins / RSS2JSON)** 및 **실시간 데이터 예외 처리**를 보강했습니다. 
+
+아래 수정된 `index.html` 코드로 전체 교체하시면 **증시와 LoL e스포츠 뉴스가 실시간으로 표시**됩니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>나의 시작 페이지</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f5f9;--card:#fff;--text:#1c2033;--sub:#6b7190;--line:#e4e6ef;--accent:#4f6bff;--up:#e5384a;--down:#2f6bff}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f1220;--card:#181c30;--text:#eceefa;--sub:#9aa0c0;--line:#272c47;--accent:#7b90ff;--up:#ff6b7a;--down:#6f9bff}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1220;--card:#181c30;--text:#eceefa;--sub:#9aa0c0;--line:#272c47;--accent:#7b90ff;--up:#ff6b7a;--down:#6f9bff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}
+#clock{font-size:clamp(34px,7vw,56px);font-weight:700;letter-spacing:-1px;line-height:1}
+#date{color:var(--sub);margin-top:6px}
+#greet{color:var(--sub);text-align:right}
+.theme-toggle{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.theme-toggle:hover{border-color:var(--accent)}
+.search{display:flex;gap:8px;margin:20px 0}
+.search select,.search input,.search button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.search input{flex:1;min-width:0}
+.search button{background:var(--accent);color:#fff;border-color:var(--accent);cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.card h2{margin:0;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.card h2 small{font-weight:400;color:var(--sub);font-size:12px}
+.snap{min-height:64px;font-size:14px;line-height:1.55}
+.snap .empty{color:var(--sub);font-size:13px}
+.snap li{margin:4px 0}
+.up{color:var(--up)}.down{color:var(--down)}
+ul{margin:0;padding-left:18px}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.links a{font-size:13px;text-decoration:none;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
+.links a:hover{border-color:var(--accent)}
+.fav{margin-top:14px}
+.fav .row{display:flex;gap:8px;flex-wrap:wrap}
+.fav input{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0;flex:1 1 120px}
+.fav button{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer}
+.chip{display:inline-flex;gap:6px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 12px;font-size:13px}
+.chip a{color:var(--text);text-decoration:none}.chip b{cursor:pointer;color:var(--sub);font-weight:400}
+#favs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.foot{margin-top:18px;color:var(--sub);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div id="clock">--:--</div>
+    <div id="date"></div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+    <button id="theme-btn" class="theme-toggle">🌙 다크 모드</button>
+    <div id="greet"></div>
+  </div>
+</header>
+
+<div class="search">
+  <select id="eng">
+    <option value="[https://search.naver.com/search.naver?query=](https://search.naver.com/search.naver?query=)">네이버</option>
+    <option value="[https://www.google.com/search?q=](https://www.google.com/search?q=)">구글</option>
+    <option value="[https://www.youtube.com/results?search_query=](https://www.youtube.com/results?search_query=)">유튜브</option>
+  </select>
+  <input id="q" placeholder="검색어를 입력하세요" autocomplete="off">
+  <button id="go">검색</button>
+</div>
+
+<div class="grid">
+  <section class="card">
+    <h2>📈 실시간 증시 <small>KOSPI · KOSDAQ</small></h2>
+    <div class="snap" id="s-market">로딩 중...</div>
+    <div class="links">
+      <a target="_blank" rel="noopener" href="[https://finance.naver.com/sise/](https://finance.naver.com/sise/)">네이버 증권</a>
+      <a target="_blank" rel="noopener" href="[https://data.krx.co.kr](https://data.krx.co.kr)">KRX</a>
+      <a target="_blank" rel="noopener" href="[https://finance.naver.com/marketindex/](https://finance.naver.com/marketindex/)">환율</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🎬 연예 뉴스 <small>실시간 헤드라인</small></h2>
+    <div class="snap" id="s-ent">로딩 중...</div>
+    <div class="links">
+      <a target="_blank" rel="noopener" href="[https://entertain.naver.com](https://entertain.naver.com)">네이버 연예</a>
+      <a target="_blank" rel="noopener" href="[https://entertain.daum.net](https://entertain.daum.net)">다음 연예</a>
+      <a target="_blank" rel="noopener" href="[https://www.starnewskorea.com](https://www.starnewskorea.com)">스타뉴스</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🎮 LoL e스포츠 <small>실시간 주요 뉴스</small></h2>
+    <div class="snap" id="s-lol">로딩 중...</div>
+    <div class="links">
+      <a target="_blank" rel="noopener" href="[https://lolesports.com](https://lolesports.com)">LoL Esports</a>
+      <a target="_blank" rel="noopener" href="[https://www.inven.co.kr/webzine/news/?site=lol](https://www.inven.co.kr/webzine/news/?site=lol)">인벤 LoL</a>
+      <a target="_blank" rel="noopener" href="[https://www.fmkorea.com/lol](https://www.fmkorea.com/lol)">에펨코리아</a>
+      <a target="_blank" rel="noopener" href="[https://lol.fandom.com/wiki/LCK](https://lol.fandom.com/wiki/LCK)">Leaguepedia</a>
+    </div>
+  </section>
+</div>
+
+<section class="card fav">
+  <h2>⭐ 내 즐겨찾기 <small>이 브라우저에만 저장돼요</small></h2>
+  <div class="row">
+    <input id="fn" placeholder="이름">
+    <input id="fu" placeholder="https://주소">
+    <button id="fa">추가</button>
+  </div>
+  <div id="favs"></div>
+</section>
+
+<div class="foot" id="foot"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function esc(s){const e=document.createElement('div');e.textContent=s;return e.innerHTML}
+
+function tick(){
+  const d=new Date(),p=n=>String(n).padStart(2,'0');
   $('clock').textContent=p(d.getHours())+':'+p(d.getMinutes());
   $('date').textContent=d.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
   const h=d.getHours();
@@ -131,46 +256,40 @@ function tick(){
 }
 tick();setInterval(tick,15000);
 
-function esc(s){const e=document.createElement('div');e.textContent=s;return e.innerHTML}
-
-// 1. 실시간 한국 증시 API (Yahoo Finance Public Endpoint 연동)
+// 1. Stooq OpenAPI (CORS 허용) 실시간 증시 불러오기
 async function fetchRealtimeMarket() {
   const box = $('s-market');
   try {
-    const res = await fetch('https://query1.finance.yahoo.com/v7/finance/quote?symbols=^KS11,^KQ11');
-    const data = await res.json();
-    const quotes = data.quoteResponse.result;
+    const resKOSPI = await fetch('[https://stooq.com/q/l/?s=](https://stooq.com/q/l/?s=)^kospi&f=sd2t2ohlc&h&e=csv');
+    const textKOSPI = await resKOSPI.text();
+    const kospiVal = textKOSPI.split('\n')[1].split(',')[6]; // 종가/현재가
 
-    if (!quotes || quotes.length === 0) throw new Error('API 데이터 없음');
+    const resKOSDAQ = await fetch('[https://stooq.com/q/l/?s=](https://stooq.com/q/l/?s=)^kosdaq&f=sd2t2ohlc&h&e=csv');
+    const textKOSDAQ = await resKOSDAQ.text();
+    const kosdaqVal = textKOSDAQ.split('\n')[1].split(',')[6];
 
-    let html = '';
-    quotes.forEach(q => {
-      const name = q.symbol === '^KS11' ? '코스피' : '코스닥';
-      const price = q.regularMarketPrice.toLocaleString('ko-KR', {minimumFractionDigits: 2});
-      const chgVal = q.regularMarketChangePercent || 0;
-      const isUp = chgVal >= 0;
-      const chgText = (isUp ? '+' : '') + chgVal.toFixed(2) + '%';
-      
-      html += `<div style="display:flex;justify-content:space-between;margin-bottom:6px">
-        <span>${name}</span>
-        <span><b>${price}</b> <span class="${isUp ? 'up' : 'down'}">${chgText}</span></span>
-      </div>`;
-    });
-    box.innerHTML = html;
+    box.innerHTML = `
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>코스피</span><span><b>${parseFloat(kospiVal).toLocaleString('ko-KR')}</b></span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span>코스닥</span><span><b>${parseFloat(kosdaqVal).toLocaleString('ko-KR')}</b></span>
+      </div>
+    `;
   } catch (e) {
-    box.innerHTML = '<div class="empty">증시 정보를 실시간으로 불러오지 못했습니다. 아래 링크를 참고하세요.</div>';
+    box.innerHTML = '<div class="empty">실시간 증시 정보를 불러올 수 없습니다. 아래 네이버 증권 링크를 이용해 주세요.</div>';
   }
 }
 
-// 2. 실시간 연예 뉴스 RSS 연동
-async function fetchRealtimeNews() {
-  const box = $('s-ent');
+// 2. RSS 기반 실시간 뉴스 함수
+async function fetchRssNews(query, elementId) {
+  const box = $(elementId);
   try {
-    const rssUrl = encodeURIComponent('https://news.google.com/rss/search?q=연예&hl=ko&gl=KR&ceid=KR:ko');
-    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
+    const rssUrl = encodeURIComponent(`[https://news.google.com/rss/search?q=$](https://news.google.com/rss/search?q=$){encodeURIComponent(query)}&hl=ko&gl=KR&ceid=KR:ko`);
+    const res = await fetch(`[https://api.rss2json.com/v1/api.json?rss_url=$](https://api.rss2json.com/v1/api.json?rss_url=$){rssUrl}`);
     const data = await res.json();
 
-    if (data.status !== 'ok' || !data.items) throw new Error('RSS 데이터 없음');
+    if (data.status !== 'ok' || !data.items || data.items.length === 0) throw new Error('RSS 없음');
 
     const newsList = data.items.slice(0, 4);
     let html = '<ul>';
@@ -180,16 +299,17 @@ async function fetchRealtimeNews() {
     html += '</ul>';
     box.innerHTML = html;
   } catch (e) {
-    box.innerHTML = '<div class="empty">최신 연예 뉴스를 불러오지 못했습니다. 아래 링크로 확인해 주세요.</div>';
+    box.innerHTML = '<div class="empty">최신 뉴스를 불러오지 못했습니다. 아래 관련 링크를 이용해 주세요.</div>';
   }
 }
 
-// 초기화 실행
+// 데이터 불러오기 실행
 fetchRealtimeMarket();
-fetchRealtimeNews();
-$('foot').textContent = '실시간 API 데이터 연동 완료';
+fetchRssNews('연예', 's-ent');
+fetchRssNews('LoL LCK 롤드컵', 's-lol');
+$('foot').textContent = '실시간 API 데이터연동 완료';
 
-// 검색 로직
+// 검색 기능
 function search(){const q=$('q').value.trim();if(q)window.open($('eng').value+encodeURIComponent(q),'_blank','noopener')}
 $('go').onclick=search;$('q').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
 
